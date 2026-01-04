@@ -34,6 +34,7 @@ class ProfileUpdateRequest extends FormRequest
             $rules = array_merge($rules, [
                 'specialization_id' => ['nullable','exists:specializations,id'],
                 'description' => ['nullable','string'],
+                'profile_picture' => ['nullable','image','mimes:jpeg,png,jpg,gif','max:2048'],
                 'city' => ['nullable','string','max:255'],
                 'postal_code' => ['nullable','regex:/^\d{2}-\d{3}$/'],
                 'street' => ['nullable','string','max:255'],

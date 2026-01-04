@@ -16,6 +16,7 @@ class DoctorData extends Model
         'address_id',
         'specialization_id',
         'description',
+        'profile_picture',
     ];
 
     public function user()

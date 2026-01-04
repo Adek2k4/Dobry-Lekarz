@@ -78,6 +78,20 @@ class ProfileController extends Controller
 
             $doctorData->specialization_id = $validated['specialization_id'] ?? $doctorData->specialization_id;
             $doctorData->description = $validated['description'] ?? $doctorData->description;
+            
+            // handle profile picture upload
+            if ($request->hasFile('profile_picture')) {
+                // delete old picture if exists
+                if ($doctorData->profile_picture && \Illuminate\Support\Facades\Storage::disk('public')->exists($doctorData->profile_picture)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($doctorData->profile_picture);
+                }
+                
+                $file = $request->file('profile_picture');
+                $path = $file->store('profile_pictures', 'public');
+                \Log::info('Profile picture uploaded: ' . $path);
+                $doctorData->profile_picture = $path;
+            }
+            
             $doctorData->save();
         }
 

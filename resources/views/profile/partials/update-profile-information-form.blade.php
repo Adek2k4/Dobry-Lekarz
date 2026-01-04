@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
@@ -78,6 +78,15 @@
                     <x-input-label for="description" :value="__('Opis profilu')" />
                     <textarea id="description" name="description" class="block mt-1 w-full rounded-md bg-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" style="background-color:#0f172a !important; color:#ffffff !important;">{{ old('description', optional($user->doctorData)->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                </div>
+
+                <div class="mt-3">
+                    <x-input-label for="profile_picture" :value="__('Zdjęcie profilowe')" />
+                    <div class="mt-2 flex items-center space-x-4">
+                        <img src="{{ optional($user->doctorData)->profile_picture ? url('storage/' . optional($user->doctorData)->profile_picture) : asset('profile.png') }}" alt="Zdjęcie profilowe" class="w-24 h-24 object-cover rounded-lg">
+                        <input id="profile_picture" name="profile_picture" type="file" accept="image/*" class="block w-full text-white file:bg-indigo-600 file:text-white file:rounded-md file:px-3 file:py-2 file:border-0" />
+                    </div>
+                    <x-input-error :messages="$errors->get('profile_picture')" class="mt-2" />
                 </div>
 
                 <h4 class="mt-4 font-medium">{{ __('Adres gabinetu') }}</h4>

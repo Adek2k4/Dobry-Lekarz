@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Shared hero styles for welcome and other blades */
+.hero{display:flex;flex-wrap:wrap;align-items:flex-start;gap:24px}
+.hero-left{flex:2 1 60%;min-width:260px}
+.hero-right{flex:1 1 30%;min-width:160px;display:flex;align-items:flex-start;justify-content:flex-end}
+.hero-title{font-weight:800;margin:0 0 16px 0;font-size:64px;line-height:1.05;text-align:left}
+.hero-body{font-size:20px;margin-top:12px;color:#ffffff}
+
+@media (max-width:768px){
+	.hero{flex-direction:column}
+	.hero-title{text-align:center;font-size:36px}
+	.hero-right{justify-content:center}
+}
+
+/* Force white text in hero */
+.hero, .hero *{ color:#ffffff !important }
+.hero a{ color:#ffffff !important }

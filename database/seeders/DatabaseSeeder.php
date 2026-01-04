@@ -19,12 +19,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             \Database\Seeders\AdminSeeder::class,
             \Database\Seeders\SpecializationsSeeder::class,
+            \Database\Seeders\DoctorsSeeder::class,
         ]);
 
-        // Example test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Example test user (create only if not exists)
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            ['name' => 'Test User']
+        );
     }
 }

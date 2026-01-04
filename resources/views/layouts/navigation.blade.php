@@ -1,24 +1,35 @@
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between h-26">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ url('/') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                    @auth
+                    <x-nav-link :href="url('/search')" :active="request()->is('search')">
+                        {{ __('Znajdź specjalistę') }}
                     </x-nav-link>
+                    <x-nav-link :href="url('/my-appointments')" :active="request()->is('my-appointments')">
+                        {{ __('Moje wizyty') }}
+                    </x-nav-link>
+                    @endauth
+                    @guest
+                    <x-nav-link :href="url('/register')" :active="request()->is('register')">
+                        {{ __('Znajdź specjalistę') }}
+                    </x-nav-link>
+                    @endguest
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
+            @auth
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -51,6 +62,15 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+            @endauth
+            @guest
+            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-3">
+                <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-900 rounded-md">Zaloguj się</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">Zarejestruj się</a>
+                @endif
+            </div>
+            @endguest
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
@@ -67,12 +87,16 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            @auth
+                @if (Auth::user()->role && Auth::user()->role->name === 'admin')
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
         </div>
-
         <!-- Responsive Settings Options -->
+        @auth
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
@@ -96,5 +120,16 @@
                 </form>
             </div>
         </div>
+        @endauth
+        @guest
+        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            <div class="px-4">
+                <a href="{{ route('login') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200">Zaloguj się</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="block px-4 py-2 text-sm text-white bg-blue-600 rounded-md mt-2">Zarejestruj się</a>
+                @endif
+            </div>
+        </div>
+        @endguest
     </div>
 </nav>
