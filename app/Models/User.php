@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(DoctorData::class, 'user_id');
     }
+
+    public function officeHours()
+    {
+        return $this->hasMany(\App\Models\OfficeHour::class, 'doctor_id');
+    }
 }

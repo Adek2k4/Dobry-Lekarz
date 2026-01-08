@@ -17,13 +17,14 @@ class AdminSeeder extends Seeder
         $patientRole = Role::firstOrCreate(['name' => 'patient']);
 
         // Create admin user
-        $adminEmail = 'admin@example.com';
+        $adminEmail = 'a@a.a';
 
         $admin = User::firstOrCreate(
             ['email' => $adminEmail],
             [
-                'name' => 'Administrator',
-                'password' => Hash::make('password'),
+                'name' => 'Admin',
+                'surname' => 'Administrator',
+                'password' => Hash::make('qwerasdf'),
                 'role_id' => $adminRole->id,
             ]
         );

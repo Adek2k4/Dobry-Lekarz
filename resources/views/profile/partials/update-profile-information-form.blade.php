@@ -115,6 +115,58 @@
                         <x-input-error class="mt-2" :messages="$errors->get('house_number')" />
                     </div>
                 </div>
+
+                <h4 class="mt-6 font-medium">{{ __('Godziny otwarcia') }}</h4>
+                <p class="text-sm text-slate-300">Pozostaw puste, jeśli gabinet jest nieczynny w danym dniu.</p>
+
+                @php
+                    $days = [
+                        1 => 'Poniedziałek',
+                        2 => 'Wtorek',
+                        3 => 'Środa',
+                        4 => 'Czwartek',
+                        5 => 'Piątek',
+                        6 => 'Sobota',
+                        7 => 'Niedziela',
+                    ];
+                    $hoursByDay = isset($user->officeHours) ? $user->officeHours->keyBy('day_of_week') : collect();
+                @endphp
+
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach($days as $d => $label)
+                        @php
+                            $existing = $hoursByDay->get($d);
+                            $defaultOpen = old('office_hours.'.$d.'.is_open') !== null
+                                ? (bool) old('office_hours.'.$d.'.is_open')
+                                : (optional($existing)->start_time && optional($existing)->end_time);
+                        @endphp
+                        <div class="bg-slate-700 rounded-md p-3" x-data="{ open: {{ $defaultOpen ? 'true' : 'false' }} }">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="font-medium">{{ $label }}</div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only" x-model="open" name="office_hours[{{ $d }}][is_open]" value="1">
+                                    <div class="relative w-10 h-5 bg-slate-600 rounded-full">
+                                        <div class="absolute top-0 left-0 w-5 h-5 rounded-full transition"
+                                             :class="open ? 'translate-x-5 bg-green-400' : 'translate-x-0 bg-gray-300'">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <input type="hidden" name="office_hours[{{ $d }}][day_of_week]" value="{{ $d }}" />
+                            <div class="grid grid-cols-2 gap-2" x-show="open">
+                                <div>
+                                    <x-input-label :value="__('Od')" />
+                                    <input x-ref="start" type="time" name="office_hours[{{ $d }}][start_time]" value="{{ old('office_hours.'.$d.'.start_time', optional($existing)->start_time) }}" class="mt-1 block w-full rounded-md bg-slate-700 text-white border-slate-600" />
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Do')" />
+                                    <input x-ref="end" type="time" name="office_hours[{{ $d }}][end_time]" value="{{ old('office_hours.'.$d.'.end_time', optional($existing)->end_time) }}" class="mt-1 block w-full rounded-md bg-slate-700 text-white border-slate-600" />
+                                </div>
+                            </div>
+                            <div x-show="!open" class="text-sm text-slate-300 mt-2">Gabinet nieczynny</div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
 

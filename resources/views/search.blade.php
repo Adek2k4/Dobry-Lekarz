@@ -52,20 +52,25 @@
                                         <img src="{{ asset('profile.png') }}" alt="{{ $doctor->user->name }}" class="w-32 h-32 object-cover rounded-lg">
                                     @endif
                                     <div class="mt-4">
-                                        <a href="{{ url('/' . Str::slug($doctor->user->name . ' ' . $doctor->user->surname) . '-' . $doctor->user->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md">Umów wizytę</a>
+                                        <a href="{{ url('/' . Str::slug($doctor->user->name . ' ' . $doctor->user->surname) . '-' . $doctor->user->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md">Umów wizytę</a>
                                     </div>
                                 </div>
 
                                 <!-- Doctor Info -->
                                 <div class="flex-grow">
-                                    <h3 class="text-lg font-semibold">{{ $doctor->user->name }}</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $doctor->specialization->name ?? 'Brak specjalizacji' }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ $doctor->address->city ?? 'Brak miasta' }}, {{ $doctor->address->postal_code ?? '' }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $doctor->address->street ?? '' }} {{ $doctor->address->house_number ?? '' }}</p>
+                                    <h3 class="text-2xl font-semibold">{{ $doctor->user->name }} {{ $doctor->user->surname }}</h3>
+                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-2">{{ $doctor->specialization->name ?? 'Brak specjalizacji' }}</p>
+                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-2">{{ $doctor->address->city ?? 'Brak miasta' }}, {{ $doctor->address->postal_code ?? '' }}</p>
+                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-1">{{ $doctor->address->street ?? '' }} {{ $doctor->address->house_number ?? '' }}</p>
 
-                                    @if ($doctor->description)
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-3">{{ Str::limit($doctor->description, 150) }}</p>
-                                    @endif
+                                    <p class="text-base font-medium text-gray-700 dark:text-gray-300 mt-3">
+                                        Ocena: 
+                                        @if ($doctor->averageRating)
+                                            <span class="text-yellow-500">{{ $doctor->averageRating }}/5</span>
+                                        @else
+                                            <span class="text-gray-500">Brak ocen</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -13,12 +13,20 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
-                    <x-nav-link :href="url('/search')" :active="request()->is('search')">
-                        {{ __('Znajdź specjalistę') }}
-                    </x-nav-link>
-                    <x-nav-link :href="url('/my-appointments')" :active="request()->is('my-appointments')">
-                        {{ __('Moje wizyty') }}
-                    </x-nav-link>
+                        @if (Auth::user()->role && Auth::user()->role->name === 'admin')
+                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                                {{ __('Panel administratora') }}
+                            </x-nav-link>
+                        @else
+                            @if (Auth::user()->role && Auth::user()->role->name !== 'doctor')
+                                <x-nav-link :href="url('/search')" :active="request()->is('search')">
+                                    {{ __('Znajdź specjalistę') }}
+                                </x-nav-link>
+                            @endif
+                            <x-nav-link :href="url('/my-appointments')" :active="request()->is('my-appointments')">
+                                {{ __('Moje wizyty') }}
+                            </x-nav-link>
+                        @endif
                     @endauth
                     @guest
                     <x-nav-link :href="url('/register')" :active="request()->is('register')">
@@ -90,7 +98,16 @@
             @auth
                 @if (Auth::user()->role && Auth::user()->role->name === 'admin')
                     <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Panel administratora') }}
+                    </x-responsive-nav-link>
+                @else
+                    @if (Auth::user()->role && Auth::user()->role->name !== 'doctor')
+                        <x-responsive-nav-link :href="url('/search')" :active="request()->is('search')">
+                            {{ __('Znajdź specjalistę') }}
+                        </x-responsive-nav-link>
+                    @endif
+                    <x-responsive-nav-link :href="url('/my-appointments')" :active="request()->is('my-appointments')">
+                        {{ __('Moje wizyty') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth

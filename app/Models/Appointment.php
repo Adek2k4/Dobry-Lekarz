@@ -16,6 +16,7 @@ class Appointment extends Model
         'patient_id',
         'appointment_date',
         'status',
+        'reason',
     ];
 
     protected static function booted()

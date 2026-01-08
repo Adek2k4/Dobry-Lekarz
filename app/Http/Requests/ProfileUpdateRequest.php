@@ -39,6 +39,10 @@ class ProfileUpdateRequest extends FormRequest
                 'postal_code' => ['nullable','regex:/^\d{2}-\d{3}$/'],
                 'street' => ['nullable','string','max:255'],
                 'house_number' => ['nullable','string','max:50'],
+                'office_hours' => ['nullable','array'],
+                'office_hours.*.day_of_week' => ['nullable','integer','between:1,7'],
+                'office_hours.*.start_time' => ['nullable','date_format:H:i'],
+                'office_hours.*.end_time' => ['nullable','date_format:H:i'],
             ]);
         }
 

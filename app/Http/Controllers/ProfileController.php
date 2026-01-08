@@ -93,6 +93,31 @@ class ProfileController extends Controller
             }
             
             $doctorData->save();
+
+            // Office hours: save open/closed per day with nullable times
+            $hours = $request->input('office_hours', []);
+            if (is_array($hours)) {
+                foreach (range(1,7) as $day) {
+                    $row = $hours[$day] ?? [];
+                    $isOpen = isset($row['is_open']);
+                    $start = $row['start_time'] ?? null;
+                    $end = $row['end_time'] ?? null;
+
+                    if ($isOpen) {
+                        // Save provided times (or null if missing)
+                        \App\Models\OfficeHour::updateOrCreate(
+                            ['doctor_id' => $user->id, 'day_of_week' => $day],
+                            ['start_time' => $start ?: null, 'end_time' => $end ?: null]
+                        );
+                    } else {
+                        // Mark closed: store nulls
+                        \App\Models\OfficeHour::updateOrCreate(
+                            ['doctor_id' => $user->id, 'day_of_week' => $day],
+                            ['start_time' => null, 'end_time' => null]
+                        );
+                    }
+                }
+            }
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
