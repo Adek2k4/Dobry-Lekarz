@@ -7,12 +7,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <a href="{{ url('/specialists') }}" class="block bg-gray-100 dark:bg-gray-900 hover:shadow-md transition p-6 rounded-lg">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Znajdź specjalistę</h3>
-                                <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Przejdź do listy specjalistów.</p>
+                                <p class="mt-2 text-sm text-gray-800 dark:text-white">Przejdź do listy specjalistów.</p>
                             </a>
 
                             <a href="{{ url('/my-appointments') }}" class="block bg-gray-100 dark:bg-gray-900 hover:shadow-md transition p-6 rounded-lg">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Moje wizyty</h3>
-                                <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Zobacz swoje umówione wizyty.</p>
+                                <p class="mt-2 text-sm text-gray-800 dark:text-white">Zobacz swoje umówione wizyty.</p>
                             </a>
                         </div>
                     @endif

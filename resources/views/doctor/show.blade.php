@@ -6,12 +6,21 @@
             </h2>
             @auth
                 @if (auth()->user()->id !== $doctor->user_id)
-                    <a href="{{ route('tickets.create', ['doctor' => $doctor->user_id]) }}" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        Zgłoś lekarza
-                    </a>
+                    @if($hasReported)
+                        <span class="inline-flex items-center px-4 py-2 bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-400 text-sm font-medium rounded-md cursor-not-allowed">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Już zgłoszono
+                        </span>
+                    @else
+                        <a href="{{ route('tickets.create', ['doctor' => $doctor->user_id]) }}" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            Zgłoś lekarza
+                        </a>
+                    @endif
                 @endif
             @endauth
         </div>
@@ -71,7 +80,7 @@
                                 </span>
                             </div>
 
-                            <div class="space-y-2 mb-4 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-2 mb-4 text-gray-800 dark:text-white">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -91,7 +100,7 @@
                             @if ($doctor->description)
                                 <div class="mt-6">
                                     <h3 class="text-lg font-semibold mb-2">O lekarzu</h3>
-                                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ $doctor->description }}</p>
+                                    <p class="text-gray-800 dark:text-white leading-relaxed">{{ $doctor->description }}</p>
                                 </div>
                             @endif
                         </div>
@@ -111,7 +120,7 @@
                                         @if (!empty($weeklySchedule[$d]) && $weeklySchedule[$d]['open'])
                                             {{ $weeklySchedule[$d]['start'] }}–{{ $weeklySchedule[$d]['end'] }}
                                         @else
-                                            <span class="text-gray-500">zamknięte</span>
+                                            <span class="text-gray-800 dark:text-white">zamknięte</span>
                                         @endif
                                     </div>
                                 </div>
@@ -235,8 +244,8 @@
                                             <div>
                                                 <div class="flex items-center gap-2 mb-1">
                                                     <span class="font-medium text-gray-900 dark:text-gray-100">{{ $review->patient->name }} {{ $review->patient->surname }}</span>
-                                                    <span class="text-sm text-gray-500 dark:text-gray-400">•</span>
-                                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $review->created_at->format('d.m.Y') }}</span>
+                                                    <span class="text-sm text-gray-800 dark:text-white">•</span>
+                                                    <span class="text-sm text-gray-800 dark:text-white">{{ $review->created_at->format('d.m.Y') }}</span>
                                                 </div>
                                                 <div class="flex">
                                                     @for ($i = 1; $i <= 5; $i++)
@@ -254,7 +263,7 @@
                                             </div>
                                         </div>
                                         @if ($review->content)
-                                            <p class="text-gray-700 dark:text-gray-300 mt-3">{{ $review->content }}</p>
+                                            <p class="text-gray-800 dark:text-white mt-3">{{ $review->content }}</p>
                                         @endif
                                     </div>
                                 @endforeach

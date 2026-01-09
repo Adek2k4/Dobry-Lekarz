@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if user is blocked
+        $user = Auth::user();
+        if ($user && $user->is_blocked) {
+            Auth::logout();
+            
+            throw ValidationException::withMessages([
+                'email' => 'Twoje konto zostało zablokowane. Skontaktuj się z administratorem strony.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

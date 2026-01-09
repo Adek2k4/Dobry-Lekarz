@@ -60,19 +60,17 @@
                                 {{ $appointment->patient->name }} {{ $appointment->patient->surname }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                @if($appointment->status === 'scheduled')
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded text-xs">Zaplanowana</span>
-                                @elseif($appointment->status === 'completed')
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded text-xs">Zakończona</span>
-                                @else
-                                    <span class="px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded text-xs">Anulowana</span>
-                                @endif
+                                <x-appointment-status :status="$appointment->status" />
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 @if($appointment->reason)
-                                    <button onclick="revealSensitiveData(this, 'powód wizyty', '{{ addslashes($appointment->reason) }}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        Pokaż powód
-                                    </button>
+                                    @if(request('reveal_reason') == $appointment->id)
+                                        <span class="text-gray-900 dark:text-gray-100 text-sm">{{ $appointment->reason }}</span>
+                                    @else
+                                        <a href="{{ route('dashboard', ['tab' => 'appointments', 'user_id' => request('user_id'), 'reveal_reason' => $appointment->id, 'page' => request('page')]) }}" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                            Pokaż powód
+                                        </a>
+                                    @endif
                                 @else
                                     <span class="text-gray-400">—</span>
                                 @endif

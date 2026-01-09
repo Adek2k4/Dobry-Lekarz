@@ -293,4 +293,63 @@ class AdminController extends Controller
         
         return response()->json(['officeHours' => $officeHours]);
     }
+    
+    /**
+     * Show tickets page for admin.
+     */
+    public function tickets(Request $request)
+    {
+        $query = \App\Models\Ticket::with(['doctor', 'patient', 'ticketType'])
+            ->orderBy('created_at', 'desc');
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('doctor', function($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%")
+                       ->orWhere('surname', 'like', "%{$search}%");
+                })
+                ->orWhereHas('patient', function($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%")
+                       ->orWhere('surname', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        $tickets = $query->paginate(15)->appends([
+            'search' => $request->search
+        ]);
+        
+        return view('admin.tickets', ['tickets' => $tickets]);
+    }
+    
+    /**
+     * Toggle user blocked status.
+     */
+    public function toggleBlockUser($userId)
+    {
+        $user = User::findOrFail($userId);
+        
+        // Prevent blocking admins
+        if ($user->role && $user->role->name === 'admin') {
+            return redirect()->back()->with('error', 'Nie można zablokować administratora');
+        }
+        
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+        
+        $message = $user->is_blocked ? 'Użytkownik został zablokowany' : 'Użytkownik został odblokowany';
+        return redirect()->back()->with('success', $message);
+    }
+    
+    /**
+     * Delete a ticket.
+     */
+    public function deleteTicket($ticketId)
+    {
+        $ticket = \App\Models\Ticket::findOrFail($ticketId);
+        $ticket->delete();
+        
+        return redirect()->back()->with('success', 'Zgłoszenie zostało usunięte');
+    }
 }

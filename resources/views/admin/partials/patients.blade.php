@@ -29,27 +29,41 @@
                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $patient->id }}</td>
                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $patient->name }} {{ $patient->surname }}</td>
                             <td class="px-4 py-3 text-sm">
-                                <button onclick="revealSensitiveData(this, 'email', '{{ $patient->email }}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    Pokaż email
-                                </button>
+                                @if(request('reveal_email') == $patient->id)
+                                    <span class="text-gray-900 dark:text-gray-100 text-sm">{{ $patient->email }}</span>
+                                @else
+                                    <a href="{{ route('dashboard', ['tab' => 'patients', 'search' => request('search'), 'reveal_email' => $patient->id, 'page' => request('page')]) }}" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        Pokaż email
+                                    </a>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 @if($patient->phone)
-                                    <button onclick="revealSensitiveData(this, 'telefon', '{{ $patient->phone }}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        Pokaż telefon
-                                    </button>
+                                    @if(request('reveal_phone') == $patient->id)
+                                        <span class="text-gray-900 dark:text-gray-100 text-sm">{{ $patient->phone }}</span>
+                                    @else
+                                        <a href="{{ route('dashboard', ['tab' => 'patients', 'search' => request('search'), 'reveal_phone' => $patient->id, 'page' => request('page')]) }}" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                            Pokaż telefon
+                                        </a>
+                                    @endif
                                 @else
                                     <span class="text-gray-400">—</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap gap-2">
                                     <a href="{{ route('dashboard', ['tab' => 'reviews', 'user_id' => $patient->id]) }}" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded">
                                         Oceny
                                     </a>
                                     <a href="{{ route('dashboard', ['tab' => 'appointments', 'user_id' => $patient->id]) }}" class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded">
                                         Wizyty
                                     </a>
+                                    <form method="POST" action="{{ route('admin.user.toggle-block', $patient->id) }}" class="inline" onsubmit="return confirm('Czy na pewno chcesz {{ $patient->is_blocked ? 'odblokować' : 'zablokować' }} użytkownika {{ $patient->name }} {{ $patient->surname }}?')">
+                                        @csrf
+                                        <button type="submit" class="px-2 py-1 rounded text-white text-xs font-medium transition {{ $patient->is_blocked ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700' }}">
+                                            {{ $patient->is_blocked ? 'Odblokuj' : 'Zablokuj' }}
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

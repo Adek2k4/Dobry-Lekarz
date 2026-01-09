@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\PatientsSeeder::class,
             \Database\Seeders\AppointmentsSeeder::class,
             \Database\Seeders\ReviewsSeeder::class,
+            \Database\Seeders\TicketsSeeder::class,
         ]);
     }
 }

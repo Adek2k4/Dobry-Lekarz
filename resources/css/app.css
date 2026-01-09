@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessibility: Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only.focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 1rem;
+    margin: 0.5rem;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
 /* Shared hero styles for welcome and other blades */
 .hero{display:flex;flex-wrap:wrap;align-items:flex-start;gap:24px}
 .hero-left{flex:2 1 60%;min-width:260px}

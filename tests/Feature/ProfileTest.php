@@ -19,6 +19,8 @@ test('profile information can be updated', function () {
         ->actingAs($user)
         ->patch('/profile', [
             'name' => 'Test User',
+            'surname' => 'Test Surname',
+            'phone' => '123456789',
             'email' => 'test@example.com',
         ]);
 
@@ -34,12 +36,15 @@ test('profile information can be updated', function () {
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
+    $patientRole = \App\Models\Role::factory()->patient()->create();
+    $user = User::factory()->create(['role_id' => $patientRole->id]);
 
     $response = $this
         ->actingAs($user)
         ->patch('/profile', [
             'name' => 'Test User',
+            'surname' => 'Test Surname',
+            'phone' => '123456789',
             'email' => $user->email,
         ]);
 

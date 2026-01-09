@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}" class="bg-slate-800 p-6 rounded-lg text-white">
+    <form method="POST" action="{{ route('register') }}" class="bg-slate-800 p-6 rounded-lg text-white" x-data="{ isDoctorSelected: {{ old('role_id') && $roles->where('name', 'doctor')->first() && old('role_id') == $roles->where('name', 'doctor')->first()->id ? 'true' : 'false' }} }">
         @csrf
 
         <!-- Imię -->
@@ -60,7 +60,9 @@
             <div class="flex gap-4 mt-2">
                 @foreach($roles as $role)
                     <label class="inline-flex items-center">
-                        <input type="radio" name="role_id" value="{{ $role->id }}" class="mr-2 role-radio" {{ old('role_id') == $role->id ? 'checked' : '' }}>
+                        <input type="radio" name="role_id" value="{{ $role->id }}" class="mr-2" 
+                               {{ old('role_id') == $role->id ? 'checked' : '' }}
+                               @change="isDoctorSelected = ('{{ $role->name }}' === 'doctor')">
                         <span>{{ ucfirst($role->name) == 'Doctor' ? 'Lekarz' : 'Pacjent' }}</span>
                     </label>
                 @endforeach
@@ -68,8 +70,8 @@
             <x-input-error :messages="$errors->get('role_id')" class="mt-2" />
         </div>
 
-        <!-- Pola dla lekarza (ukryte domyślnie) -->
-        <div id="doctor-fields" class="mt-4" style="display: none;">
+        <!-- Pola dla lekarza (ukryte domyślnie, pokazywane przez Alpine.js) -->
+        <div id="doctor-fields" class="mt-4" x-show="isDoctorSelected" style="display: none;">
             <h3 class="font-semibold">Dane lekarza</h3>
 
             <div class="mt-2">
@@ -124,19 +126,5 @@
                 {{ __('Zarejestruj się') }}
             </x-primary-button>
         </div>
-
-        <script>
-            (function(){
-                function toggleDoctorFields(){
-                    const radios = document.querySelectorAll('.role-radio');
-                    let doctorSelected = false;
-                    radios.forEach(r => { if(r.checked){ doctorSelected = r.nextElementSibling && r.nextElementSibling.textContent.trim().toLowerCase().includes('lekarz'); }});
-                    document.getElementById('doctor-fields').style.display = doctorSelected ? 'block' : 'none';
-                }
-                document.querySelectorAll('.role-radio').forEach(r => r.addEventListener('change', toggleDoctorFields));
-                // initial
-                toggleDoctorFields();
-            })();
-        </script>
     </form>
 </x-guest-layout>

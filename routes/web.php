@@ -14,6 +14,9 @@ Route::get('/search', [DoctorController::class, 'search'])->name('search')->midd
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware(['auth', 'verified', 'admin'])->name('dashboard');
 
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/tickets', [AdminController::class, 'tickets'])->name('admin.tickets');
+    Route::post('/admin/users/{user}/toggle-block', [AdminController::class, 'toggleBlockUser'])->name('admin.user.toggle-block');
+    Route::delete('/admin/tickets/{ticket}', [AdminController::class, 'deleteTicket'])->name('admin.ticket.delete');
     Route::get('/admin/users/{user}/appointments', [AdminController::class, 'getUserAppointments'])->name('admin.user.appointments');
     Route::get('/admin/users/{user}/reviews', [AdminController::class, 'getUserReviews'])->name('admin.user.reviews');
     Route::get('/admin/doctors/{user}/office-hours', [AdminController::class, 'getDoctorOfficeHours'])->name('admin.doctor.office-hours');

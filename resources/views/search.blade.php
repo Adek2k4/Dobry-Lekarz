@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
             {{ __('Znajdź specjalistę') }}
         </h2>
     </x-slot>
@@ -12,12 +12,12 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form method="GET" action="{{ route('search') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imię i nazwisko</label>
-                            <input type="text" name="name" id="name" value="{{ request('name') }}" placeholder="Szukaj lekarza..." class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100">
+                            <label for="name" class="block text-sm font-medium text-gray-800 dark:text-white">Imię i nazwisko</label>
+                            <input type="text" name="name" id="name" value="{{ request('name') }}" placeholder="Szukaj lekarza..." class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400">
                         </div>
 
                         <div>
-                            <label for="specialization_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Specjalizacja</label>
+                            <label for="specialization_id" class="block text-sm font-medium text-gray-800 dark:text-white">Specjalizacja</label>
                             <select name="specialization_id" id="specialization_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100">
                                 <option value="">Wszystkie</option>
                                 @foreach ($specializations as $spec)
@@ -27,8 +27,8 @@
                         </div>
 
                         <div>
-                            <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Miasto</label>
-                            <input type="text" name="city" id="city" value="{{ request('city') }}" placeholder="np. Warszawa" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100">
+                            <label for="city" class="block text-sm font-medium text-gray-800 dark:text-white">Miasto</label>
+                            <input type="text" name="city" id="city" value="{{ request('city') }}" placeholder="np. Warszawa" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400">
                         </div>
 
                         <div class="flex items-end">
@@ -59,11 +59,11 @@
                                 <!-- Doctor Info -->
                                 <div class="flex-grow">
                                     <h3 class="text-2xl font-semibold">{{ $doctor->user->name }} {{ $doctor->user->surname }}</h3>
-                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-2">{{ $doctor->specialization->name ?? 'Brak specjalizacji' }}</p>
-                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-2">{{ $doctor->address->city ?? 'Brak miasta' }}, {{ $doctor->address->postal_code ?? '' }}</p>
-                                    <p class="text-base text-gray-600 dark:text-gray-400 mt-1">{{ $doctor->address->street ?? '' }} {{ $doctor->address->house_number ?? '' }}</p>
+                                    <p class="text-base text-gray-800 dark:text-white mt-2">{{ $doctor->specialization->name ?? 'Brak specjalizacji' }}</p>
+                                    <p class="text-base text-gray-800 dark:text-white mt-2">{{ $doctor->address->city ?? 'Brak miasta' }}, {{ $doctor->address->postal_code ?? '' }}</p>
+                                    <p class="text-base text-gray-800 dark:text-white mt-1">{{ $doctor->address->street ?? '' }} {{ $doctor->address->house_number ?? '' }}</p>
 
-                                    <p class="text-base font-medium text-gray-700 dark:text-gray-300 mt-3">
+                                    <p class="text-base font-medium text-gray-800 dark:text-white mt-3">
                                         Ocena: 
                                         @if ($doctor->averageRating)
                                             <span class="text-yellow-500">{{ $doctor->averageRating }}/5</span>

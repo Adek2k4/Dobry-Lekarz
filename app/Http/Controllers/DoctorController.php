@@ -15,6 +15,14 @@ use Carbon\Carbon;
 class DoctorController extends Controller
 {
     /**
+     * Generate URL-friendly slug for doctor profile.
+     */
+    private function generateDoctorSlug(User $doctor): string
+    {
+        return strtolower($doctor->name) . '-' . strtolower($doctor->surname) . '-' . $doctor->id;
+    }
+
+    /**
      * Show the search page with doctors filtered by query.
      */
     public function search(Request $request)
@@ -130,7 +138,9 @@ class DoctorController extends Controller
 
         $availableDays = [];
         $timeSlots = [];
+        $now = Carbon::now();
         $today = Carbon::today();
+        
         for ($i = 0; $i < 60; $i++) {
             $date = $today->copy()->addDays($i);
             $dayOfWeek = (int) $date->dayOfWeekIso; // 1 (Mon) ... 7 (Sun)
@@ -143,6 +153,16 @@ class DoctorController extends Controller
 
                 while ($start->lessThan($end)) {
                     $timeString = $start->format('H:i');
+                    
+                    // Create datetime for this slot
+                    $slotDateTime = Carbon::parse($date->toDateString() . ' ' . $timeString);
+                    
+                    // Skip if slot is in the past or less than 30 minutes from now
+                    if ($slotDateTime->lessThanOrEqualTo($now->copy()->addMinutes(30))) {
+                        $start->addMinutes(60);
+                        continue;
+                    }
+                    
                     // Exclude booked slots
                     if (!isset($bookedSlots[$date->toDateString()]) || !in_array($timeString, $bookedSlots[$date->toDateString()])) {
                         $slots[] = $timeString;
@@ -161,6 +181,14 @@ class DoctorController extends Controller
             }
         }
 
+        // Check if current user has already reported this doctor
+        $hasReported = false;
+        if (auth()->check()) {
+            $hasReported = Ticket::where('doctor_id', $doctorData->user_id)
+                ->where('patient_id', auth()->id())
+                ->exists();
+        }
+
         return view('doctor.show', [
             'doctor' => $doctorData,
             'averageRating' => $averageRating,
@@ -168,6 +196,7 @@ class DoctorController extends Controller
             'weeklySchedule' => $weeklySchedule,
             'availableDays' => $availableDays,
             'timeSlots' => $timeSlots,
+            'hasReported' => $hasReported,
             'reviews' => \App\Models\Review::with('patient')
                 ->where('doctor_id', $doctorData->user_id)
                 ->orderBy('created_at', 'desc')
@@ -189,6 +218,11 @@ class DoctorController extends Controller
 
         // Combine date and time
         $appointmentDateTime = Carbon::parse($validated['appointment_date'] . ' ' . $validated['appointment_time']);
+
+        // Check if appointment is in the past
+        if ($appointmentDateTime->isPast()) {
+            return back()->withErrors(['appointment_time' => 'Nie można umówić wizyty na termin, który już minął.'])->withInput();
+        }
 
         // Check if slot is still available
         $exists = Appointment::where('doctor_id', $validated['doctor_id'])
@@ -261,14 +295,24 @@ class DoctorController extends Controller
     {
         $user = auth()->user();
         
-        // Check if user is the doctor for this appointment
-        if ($appointment->doctor_id !== $user->id) {
+        // Check if user is the doctor or patient for this appointment
+        if ($appointment->doctor_id !== $user->id && $appointment->patient_id !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
         $validated = $request->validate([
             'status' => 'required|in:completed,cancelled',
         ]);
+        
+        // Patients can only cancel scheduled appointments
+        if ($appointment->patient_id === $user->id) {
+            if ($appointment->status !== 'scheduled') {
+                return back()->withErrors(['error' => 'Można anulować tylko zaplanowane wizyty.']);
+            }
+            if ($validated['status'] !== 'cancelled') {
+                abort(403, 'Pacjenci mogą tylko anulować wizyty.');
+            }
+        }
 
         $appointment->update([
             'status' => $validated['status'],
@@ -414,11 +458,13 @@ class DoctorController extends Controller
             'ticket_type_id' => 'required|exists:ticket_types,id',
         ]);
         
-        $doctorId = $validated['doctor_id'];
+        $doctorId = (int) $validated['doctor_id'];
         
         // Verify user is not reporting themselves
-        if (auth()->id() === $doctorId) {
-            return back()->with('error', 'Nie możesz zgłosić samego siebie.');
+        if (auth()->id() == $doctorId) {
+            // Get doctor data to redirect back to profile
+            $doctor = User::with(['doctorData'])->findOrFail($doctorId);
+            return redirect('/' . $this->generateDoctorSlug($doctor))->with('error', 'Nie możesz zgłosić samego siebie.');
         }
         
         // Check if ticket already exists
@@ -427,16 +473,21 @@ class DoctorController extends Controller
             ->first();
         
         if ($existingTicket) {
-            return back()->with('error', 'Już zgłosiłeś tego lekarza.');
+            // Get doctor data to redirect back to profile
+            $doctor = User::with(['doctorData'])->findOrFail($doctorId);
+            return redirect('/' . $this->generateDoctorSlug($doctor))->with('error', 'Już zgłosiłeś tego lekarza.');
         }
         
         // Create ticket
-        Ticket::create([
+        $ticket = Ticket::create([
             'doctor_id' => $doctorId,
             'patient_id' => auth()->id(),
             'ticket_type_id' => $validated['ticket_type_id'],
         ]);
         
-        return redirect()->back()->with('success', 'Zgłoszenie zostało pomyślnie wysłane.');
+        // Get doctor data to redirect back to profile
+        $doctor = User::with(['doctorData'])->findOrFail($doctorId);
+        
+        return redirect('/' . $this->generateDoctorSlug($doctor))->with('success', 'Zgłoszenie zostało pomyślnie przyjęte. Administrator zostanie powiadomiony.');
     }
 }

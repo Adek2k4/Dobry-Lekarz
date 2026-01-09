@@ -9,7 +9,8 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+    $patientRole = \App\Models\Role::factory()->patient()->create();
+    $user = User::factory()->create(['role_id' => $patientRole->id]);
 
     $response = $this->post('/login', [
         'email' => $user->email,
@@ -17,7 +18,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect('/');
 });
 
 test('users can not authenticate with invalid password', function () {

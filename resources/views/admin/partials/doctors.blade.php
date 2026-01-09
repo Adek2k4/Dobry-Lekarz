@@ -34,15 +34,23 @@
                                 {{ $doctor->doctorData->specialization->name ?? '—' }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                <button onclick="revealSensitiveData(this, 'email', '{{ $doctor->email }}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    Pokaż email
-                                </button>
+                                @if(request('reveal_email') == $doctor->id)
+                                    <span class="text-gray-900 dark:text-gray-100 text-sm">{{ $doctor->email }}</span>
+                                @else
+                                    <a href="{{ route('dashboard', ['tab' => 'doctors', 'search' => request('search'), 'reveal_email' => $doctor->id, 'page' => request('page')]) }}" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        Pokaż email
+                                    </a>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 @if($doctor->phone)
-                                    <button onclick="revealSensitiveData(this, 'telefon', '{{ $doctor->phone }}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        Pokaż telefon
-                                    </button>
+                                    @if(request('reveal_phone') == $doctor->id)
+                                        <span class="text-gray-900 dark:text-gray-100 text-sm">{{ $doctor->phone }}</span>
+                                    @else
+                                        <a href="{{ route('dashboard', ['tab' => 'doctors', 'search' => request('search'), 'reveal_phone' => $doctor->id, 'page' => request('page')]) }}" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                            Pokaż telefon
+                                        </a>
+                                    @endif
                                 @else
                                     <span class="text-gray-400">—</span>
                                 @endif
@@ -65,6 +73,12 @@
                                     <a href="{{ route('dashboard', ['tab' => 'office_hours', 'doctor_id' => $doctor->id]) }}" class="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white text-xs rounded">
                                         Godziny
                                     </a>
+                                    <form method="POST" action="{{ route('admin.user.toggle-block', $doctor->id) }}" class="inline" onsubmit="return confirm('Czy na pewno chcesz {{ $doctor->is_blocked ? 'odblokować' : 'zablokować' }} użytkownika {{ $doctor->name }} {{ $doctor->surname }}?')">
+                                        @csrf
+                                        <button type="submit" class="px-2 py-1 rounded text-white text-xs font-medium transition {{ $doctor->is_blocked ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700' }}">
+                                            {{ $doctor->is_blocked ? 'Odblokuj' : 'Zablokuj' }}
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

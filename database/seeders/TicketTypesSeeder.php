@@ -16,7 +16,6 @@ class TicketTypesSeeder extends Seeder
             'Podszywanie się pod innego lekarza',
             'Fałszowanie kwalifikacji lub certyfikatów',
             'Nieuprawnione wykonywanie praktyki medycznej',
-            'Nadużycie zaufania pacjenta',
             'Żądanie nielegalnych opłat',
             'Molestowanie lub przemoc wobec pacjenta',
             'Naruszenie tajemnicy lekarskiej',
