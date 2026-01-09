@@ -20,7 +20,7 @@ class PatientsSeeder extends Seeder
         $patientRole = Role::where('name', 'patient')->first();
         $roleId = $patientRole ? $patientRole->id : null;
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $firstName = $faker->firstName();
             $lastName = $faker->lastName();
             $email = $faker->unique()->safeEmail();
